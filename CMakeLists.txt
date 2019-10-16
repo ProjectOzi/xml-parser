@@ -50,4 +50,11 @@ else(HAVE_STDBOOL_HEADER)
    message("** stdbool.h not found")
 endif(HAVE_STDBOOL_HEADER)
 
-add_subdirectory(src)
+option(USE_single_header "Builds ozixml as a single header file" OFF)
+
+set(OZIXML_LIB_SOURCES
+   ozi-xml.c
+)
+
+add_library(ozixml SHARED "${OZIXML_LIB_SOURCES}")
+add_library(ozixmlstat STATIC "${OZIXML_LIB_SOURCES}")

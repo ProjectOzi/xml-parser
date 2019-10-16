@@ -1,11 +1,8 @@
-#ifndef OZIXML_COMPILER_INFO_H
-#define OZIXML_COMPILER_INFO_H
+#ifndef OZI_XML_HEADER
+#define OZI_XML_HEADER
 
-/**
- * Header that gives info about availabilities in the C
- * distribution.
- */
-
+//----compiler info---
+//--------------------
 #if defined(__STDC__)
 #  if defined(__STDC_VERSION__)
 #    if (__STDC_VERSION__ >= 199409L)
@@ -77,6 +74,7 @@ typedef unsigned __int64 uint64_t;
 
 // Debugging tools
 #include <stdio.h>
+#include <string.h>
 #ifdef __GNUC__
 #  define  OZIXML_DEBUG(msg) fprintf(stderr, \
                 "OZIXML-DEBUG: %s, line: %u, function: %s, file: %s\n", \
@@ -101,6 +99,39 @@ typedef unsigned __int64 uint64_t;
 #endif // !__GNUC__
 
 #include <stdlib.h> 
+//---------------------
 
+/**
+ * Utility function used to create a duplicate string.
+ */
+const char* Ozi__strdup(const char* string, size_t len);
 
-#endif // OZIXML_COMPILER_INFO_H
+#define OZI_XML_MAX_TAG_SIZE 20
+
+struct Ozi_XmlNode;
+
+union Ozi_XmlNodeValue {
+    struct Ozi_XmlNode* child;
+    const char* text;
+};
+
+struct Ozi_XmlNode {
+    char tag[OZI_XML_MAX_TAG_SIZE];
+    struct Ozi_XmlNode* next;
+    union Ozi_XmlNodeValue;
+};
+
+typedef struct Ozi_XmlNode Ozi_XmlNode;
+
+/**
+ * Text nodes have a reserved tag "/t", that can never be an xml tag since / is always
+ * a closing tag.
+ */
+#define OZIXML_IS_TEXT_NODE(node) (node->tag[0] == '/' && node->tag[1] == 't' && !(node->tag[2]))
+
+Ozi_XmlNode* Ozi_XmlNode_new(void);
+
+Ozi_XmlNode* Ozi_Xml_parse(const char* data);
+               
+
+#endif
